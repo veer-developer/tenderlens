@@ -7,7 +7,7 @@ import re
 # ─────────────────────────────────────────────
 # CONFIG — paste your Groq API key here
 # ─────────────────────────────────────────────
-GROQ_API_KEY = "your-groq-api-key-here"
+GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
 client = Groq(api_key=GROQ_API_KEY)
 
 def ask_ai(prompt):
