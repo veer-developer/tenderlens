@@ -7,7 +7,7 @@ import re
 # ─────────────────────────────────────────────
 # CONFIG — paste your Groq API key here
 # ─────────────────────────────────────────────
-GROQ_API_KEY = ""
+GROQ_API_KEY = "your-groq-api-key-here"
 client = Groq(api_key=GROQ_API_KEY)
 
 def ask_ai(prompt):
@@ -45,6 +45,13 @@ st.markdown("""
 # HELPERS
 # ─────────────────────────────────────────────
 
+FALLBACK_CRITERIA = [
+    {"id": 1, "criterion": "Minimum annual turnover of Rs. 5 crore", "type": "Financial", "mandatory": True, "threshold": "Rs. 5 crore"},
+    {"id": 2, "criterion": "At least 3 similar projects in last 5 years", "type": "Technical", "mandatory": True, "threshold": "3 projects"},
+    {"id": 3, "criterion": "Valid GST registration certificate", "type": "Document", "mandatory": True, "threshold": None},
+    {"id": 4, "criterion": "ISO 9001 certification", "type": "Compliance", "mandatory": False, "threshold": None},
+]
+
 def extract_text_from_pdf(uploaded_file):
     try:
         pdf_bytes = uploaded_file.read()
@@ -78,12 +85,7 @@ Return only the JSON array starting with [:"""
         raw = clean_json(ask_ai(prompt))
         return json.loads(raw)
     except:
-        return [
-            {{"id":1,"criterion":"Minimum annual turnover of Rs. 5 crore","type":"Financial","mandatory":True,"threshold":"Rs. 5 crore"}},
-            {{"id":2,"criterion":"At least 3 similar projects in last 5 years","type":"Technical","mandatory":True,"threshold":"3 projects"}},
-            {{"id":3,"criterion":"Valid GST registration certificate","type":"Document","mandatory":True,"threshold":None}},
-            {{"id":4,"criterion":"ISO 9001 certification","type":"Compliance","mandatory":False,"threshold":None}},
-        ]
+        return FALLBACK_CRITERIA
 
 def evaluate_bidder(name, text, criteria):
     prompt = f"""You are a strict government procurement evaluator.
